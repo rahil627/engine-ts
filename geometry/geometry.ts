@@ -64,7 +64,11 @@ interface IRectangleStatic extends IShapeStatic<IRectangle> {
     TopLeft: (rectangle: IRectangle) => IPoint,
     TopRight: (rectangle: IRectangle) => IPoint,
     BottomLeft: (rectangle: IRectangle) => IPoint,
-    BottomRight: (rectangle: IRectangle) => IPoint
+    BottomRight: (rectangle: IRectangle) => IPoint,
+    xLeft: (rectangle: IRectangle) => number,
+    xRight: (rectangle: IRectangle) => number,
+    yTop: (rectangle: IRectangle) => number,
+    yBottom: (rectangle: IRectangle) => number,
 }
 
 interface IPolygonStatic extends IShapeStatic<IPolygon> {
@@ -636,7 +640,11 @@ export class Geometry {
         BottomRight: (rectangle: IRectangle): IPoint => ({
             x: rectangle.x + rectangle.w,
             y: rectangle.y + rectangle.h
-        })
+        }),
+        xLeft: (rectangle: IRectangle): number => rectangle.x,
+        xRight: (rectangle: IRectangle): number => rectangle.x + rectangle.w,
+        yTop: (rectangle: IRectangle) => rectangle.y,
+        yBottom: (rectangle: IRectangle) => rectangle.y + rectangle.h,
     }
 
     public static Polygon: IPolygonStatic = {
