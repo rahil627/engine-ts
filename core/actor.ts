@@ -23,6 +23,30 @@ export class Actor extends Entity {
     public set h(h: number) {
         this.boundsLocal.h = h;
     }
+    public get xLeft(): number {
+        return this.boundsLocal.x + this.position.x;
+    }
+    public set xLeft(xLeft: number) {
+        this.position.x = xLeft - this.boundsLocal.x;
+    }
+    public get xRight(): number {
+        return this.boundsLocal.x + this.boundsLocal.w + this.position.x;
+    }
+    public set xRight(xRight: number) {
+        this.position.x = xRight - this.boundsLocal.x - this.boundsLocal.w;
+    }
+    public get yTop(): number {
+        return this.boundsLocal.y + this.position.y;
+    }
+    public set yTop(yTop: number) {
+        this.position.y = yTop - this.boundsLocal.y;
+    }
+    public get yBottom(): number {
+        return this.boundsLocal.y + this.boundsLocal.h + this.position.y;
+    }
+    public set yBottom(yBottom: number) {
+        this.position.y = yBottom - this.boundsLocal.y - this.boundsLocal.h;
+    }
 
     public friction: number = 0.01;
     public readonly velocity: Point = new Point();

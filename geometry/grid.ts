@@ -90,26 +90,31 @@ export class Grid<T> implements IGrid<T> {
         return region;
     };
 
-    private tiles: T[][];
+    public readonly tiles: T[][];
     public readonly h: number;
     public readonly w: number;
 
     constructor(w: number, h: number, private tileGetter: (position: IPoint) => T) {
         this.h = Math.ceil(h);
         this.w = Math.ceil(w);
-        this.reset();
-    }
 
-    public reset(): void {
-        this.tiles = [];
         const position = new Point();
+        this.tiles = [];
         for(let y = 0; y < this.h; y++) {
             const row = [];
             for(let x = 0; x < this.w; x++) {
-                position.setToXY(x, y);
-                row.push(this.tileGetter({ x, y }));
+                row.push(this.tileGetter(position.setToXY(x, y)));
             }
             this.tiles.push(row);
+        }
+    }
+
+    public reset(): void {
+        const position = new Point();
+        for(let y = 0; y < this.h; y++) {
+            for(let x = 0; x < this.w; x++) {
+                this.tiles[y][x] = this.tileGetter(position.setToXY(x, y));
+            }
         }
     }
 

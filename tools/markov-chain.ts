@@ -12,14 +12,15 @@ export class MarkovChain {
 export class MarkovLink {
     private readonly linkWeights: { link: MarkovLink, weight: number }[] = [];
 
-    constructor(private readonly action: () => void) {}
+    constructor(private readonly action?: () => void) {}
 
     public addLink(link: MarkovLink, weight: number) {
         this.linkWeights.push({ link, weight });
     }
 
     public execute(): void {
-        this.action();
+        if(this.action)
+            this.action();
     }
 
     public sample(): MarkovLink | null {

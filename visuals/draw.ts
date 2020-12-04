@@ -21,64 +21,57 @@ interface CameraContext {
 // TODO: remove world from this doc and instead create a world.draw property which has all these
 // same functions and simply calls the below functions after applying the world's camera position, zoom level, etc.
 export class Draw {
-    // TODO: make "center" property functional (similar to rectangle drawing where position is still considered)
     public static image(world: World, imageName: string, position: IPoint, scale: IPoint=Geometry.Point.One, angle: number=0, center?:IPoint, alpha:number=1) {
         const context = world.context;
         const image = world.images.get(imageName);
         if(!image) {
             return;
         }
-        const w = scale.x * (image.width as number);
-        const h = scale.y * (image.height as number);
-        center = center || { 
-            x: position.x + w/2,
-            y: position.y + h/2
-        };
+
+        const w = Math.abs(scale.x * (image.width as number));
+        const h = Math.abs(scale.y * (image.height as number));
 
         const globalAlphaPrevious = context.globalAlpha;
         context.globalAlpha = alpha;
 
-        if(angle === 0) {
-            context.drawImage(image, center.x - w/2 - world.camera.x, center.y - h/2 - world.camera.y, w, h);
-        } else {
-            context.translate(center.x - world.camera.x, center.y - world.camera.y);
-            context.rotate(angle);
-            context.drawImage(image, -w/2, -h/2, w, h);
+        const cx = (center?.x ?? (position.x + w/2)) - world.camera.x;
+        const cy = (center?.y ?? (position.y + h/2)) - world.camera.y;
+        const px = position.x + w/2 - world.camera.x;
+        const py = position.y + h/2 - world.camera.y;
+        context.translate(cx, cy);
+        if(angle !== 0)
             context.rotate(-angle);
-            context.translate(-center.x + world.camera.x, -center.y + world.camera.y);
-        }
+        context.scale(Math.sign(scale.x), Math.sign(scale.y));
+        context.translate(px - cx, py - cy);
+        context.drawImage(image, -w/2, -h/2, w, h);
+        context.resetTransform();
 
         context.globalAlpha = globalAlphaPrevious;
     }
     
-    // TODO: make "center" property functional (similar to rectangle drawing where position is still considered)
     public static imagePart(world: World, imageName: string, position: IPoint, sx: number, sy: number, sw: number, sh: number, scale: IPoint=Geometry.Point.One, angle: number=0, center?:IPoint, alpha:number=1) {
         const context = world.context;
         const image = world.images.get(imageName);
         if(!image) {
             return;
         }
-        const w = scale.x * sw;
-        const h = scale.y * sh;
-        center = center || { 
-            x: position.x + w/2,
-            y: position.y + h/2
-        };
+        const w = Math.abs(scale.x * sw);
+        const h = Math.abs(scale.y * sh);
 
         const globalAlphaPrevious = context.globalAlpha;
         context.globalAlpha = alpha;
 
-        if(angle === 0) {
-            context.drawImage(image, sx, sy, sw, sh, center.x - w/2 - world.camera.x, center.y - h/2 - world.camera.y, w, h);
-        } else {
-            context.translate(center.x - world.camera.x, center.y - world.camera.y);
-            context.rotate(angle);
-            context.translate(position.x - world.camera.x - (center.x - world.camera.x), position.y - world.camera.y - (center.y - world.camera.y));
-            context.drawImage(image, sx, sy, sw, sh, -w/2, -h/2, w, h);
-            context.translate(-(position.x - world.camera.x - (center.x - world.camera.x)), -(position.y - world.camera.y - (center.y - world.camera.y)));
+        const cx = (center?.x ?? (position.x + w/2)) - world.camera.x;
+        const cy = (center?.y ?? (position.y + h/2)) - world.camera.y;
+        const px = position.x + w/2 - world.camera.x;
+        const py = position.y + h/2 - world.camera.y;
+        context.translate(cx, cy);
+        if(angle !== 0)
             context.rotate(-angle);
-            context.translate(-center.x + world.camera.x, -center.y + world.camera.y);
-        }
+        context.scale(Math.sign(scale.x), Math.sign(scale.y));
+        context.translate(px - cx, py - cy);
+        context.drawImage(image, sx, sy, sw, sh, -w/2, -h/2, w, h);
+        context.resetTransform();
 
         context.globalAlpha = globalAlphaPrevious;
     }
@@ -274,12 +267,12 @@ export class Draw {
             return;
         }
         
-        center = center || Geometry.Point.Subtract(Geometry.Rectangle.Center(rectangle), world.camera);
+        center = center || Geometry.Rectangle.Center(rectangle);
+        center = Geometry.Point.Subtract(center, world.camera)
         context.translate(center.x, center.y);
         context.rotate(-angle);
         context.fillRect(rectangle.x - world.camera.x - center.x, rectangle.y - world.camera.y - center.y, rectangle.w, rectangle.h);
-        context.rotate(angle);
-        context.translate(-center.x, -center.y);
+        context.resetTransform();
     };
     
     public static rectangleOutline(world: CameraContext, rectangle: IRectangle, strokeStyle: StrokeStyle=null, lineWidth: number=1, angle: number = 0) {
