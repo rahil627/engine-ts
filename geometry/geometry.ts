@@ -537,10 +537,17 @@ export class Geometry {
         BoundsRectangles: (rectangles: IRectangle[]) => {
             if(rectangles == null || rectangles.length <= 0)
                 return { x: 0, y: 0, w: 0, h: 0 };
-            const xMin = rectangles.map(o => o.x).min();
-            const yMin = rectangles.map(o => o.y).min();
-            const xMax = rectangles.map(o => o.x + o.w).max();
-            const yMax = rectangles.map(o => o.y + o.h).max();
+            let xMin = rectangles[0].x;
+            let yMin = rectangles[0].y;
+            let xMax = rectangles[0].x + rectangles[0].w;
+            let yMax = rectangles[0].y + rectangles[0].h;
+            for(let i = 1; i < rectangles.length; i++) {
+                const rectangle = rectangles[i];
+                xMin = Math.min(rectangle.x, xMin);
+                yMin = Math.min(rectangle.y, yMin);
+                xMax = Math.max(rectangle.x + rectangle.w, xMax);
+                yMax = Math.max(rectangle.y + rectangle.h, yMax);
+            }
             return { x: xMin, y: yMin, w: xMax - xMin, h: yMax - yMin };
         },
         Midpoint: (rectangle: IRectangle): IPoint => ({ x: rectangle.x + rectangle.w/2, y: rectangle.y + rectangle.h/2 }),
@@ -951,7 +958,7 @@ export class Geometry {
     //  c = point being checked against the PointPair)
     // TODO: rename 
     private static isSameSideOfPoint = (a: IPoint, b: IPoint, c: IPoint) =>
-        a.x === b.x
+        Geometry.IsWithinToleranceOf(a.x, b.x)
             ? (Math.sign(c.y - a.y) === Math.sign(b.y - a.y) || Math.sign(c.y - a.y) === 0 || Math.sign(b.y - a.y) === 0)
             : (Math.sign(c.x - a.x) === Math.sign(b.x - a.x) || Math.sign(c.x - a.x) === 0 || Math.sign(b.x - a.x) === 0);
 
@@ -1035,6 +1042,9 @@ export class Geometry {
                 x: (xFirstLineDiff * cSecond - xSecondLineDiff * cFirst) / denominator,
                 y: (ySecondLineDiff * cFirst - yFirstLineDiff * cSecond) / denominator
             };
+
+            if(firstType === PointPairType.LINE && secondType === PointPairType.LINE)
+                return intersection;
     
             const beyondFirstA = !Geometry.isSameSideOfPoint(first.a, first.b, intersection);
             const beyondFirstB = !Geometry.isSameSideOfPoint(first.b, first.a, intersection);
