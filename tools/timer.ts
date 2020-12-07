@@ -1,4 +1,3 @@
-import { World } from '@engine-ts/core/world';
 import { clamp } from '@engine-ts/core/utils';
 
 export class Timer {
@@ -12,7 +11,7 @@ export class Timer {
     public get finished(): boolean { return this.value >= 1; }
     public toRange(min: number, max: number) { return (max - min) * this.value + min; }
     
-    constructor(private readonly world: World, public seconds: number=1) {}
+    constructor(public seconds: number=1) {}
 
     public reset(seconds: number=this.seconds): void {
         this.seconds = seconds;
@@ -22,11 +21,12 @@ export class Timer {
         this.paused = false;
     }
 
-    public update() {
+    // deltaMs == world.delta
+    public update(deltaMs: number) {
         if(this.paused)
             return;
         const valueLast = this.value;
-        this.value = this.clean(this.seconds > 0 ? this.value + this.world.delta / 1000 / this.seconds : 1);
+        this.value = this.clean(this.seconds > 0 ? this.value + deltaMs / 1000 / this.seconds : 1);
         this.triggered = this.value >= 1 && valueLast < 1;
         this.started = true;
     }
