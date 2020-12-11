@@ -92,6 +92,8 @@ export class Sprite {
             const animation = this.animationByName[this.currentAnimationName];
             const currentIndices = animation.currentIndices;
             this.drawFrame(position, currentIndices.x, currentIndices.y, scale, angle, center, alpha);
+        } else if(this.currentAnimationName == null) {
+            this.drawFrame(position, 0, 0);
         }
     }
 
