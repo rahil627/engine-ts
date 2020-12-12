@@ -13,6 +13,7 @@ export class Gamepads {
     private pressedByIndex: { [gamepadId: number]: { [button: string]: boolean} } = {};
     private releasedByIndex: { [gamepadId: number]: { [button: string]: boolean} } = {};
 
+    private static readonly TriggerBuffer: number = 0.1;
     private static readonly DeadzoneDefault = 0.3;
     private get gamepads(): { [gamepadId: number]: Gamepad } {
         const gamepadsRaw = navigator.getGamepads();
@@ -30,8 +31,8 @@ export class Gamepads {
         3: [Button.Y],
         4: [Button.LB],
         5: [Button.RB],
-        // 6 - left trigger
-        // 7 - right trigger
+        6: [Button.LT],
+        7: [Button.RT],
         8: [Button.SELECT, Button.BACK],
         9: [Button.START],
         10: [Button.L3],
@@ -70,16 +71,15 @@ export class Gamepads {
 
             for(let buttonIndex = 0; buttonIndex < gamepad.buttons.length; buttonIndex++)
             {
-                if(buttonIndex === 6 || buttonIndex === 7)
-                    continue;
-
                 const buttons = this.tryGetValueOrDefaultFromDict(Gamepads.ButtonMappings, buttonIndex.toString(), []);
                 const wasDown = this.tryGetValueOrDefaultFromDict(
                     this.tryGetValueOrDefaultFromDict(this.downByIndex, gamepadId, {}),
                     buttons[0],
                     false
                 );
-                const isDown = gamepad.buttons[buttonIndex].pressed;
+                const isDown = buttonIndex == 6 || buttonIndex == 7
+                    ? gamepad.buttons[buttonIndex].value > Gamepads.TriggerBuffer
+                    : gamepad.buttons[buttonIndex].pressed;
                 const isPressed = isDown && !wasDown;
                 const isReleased = !isDown && wasDown;
 

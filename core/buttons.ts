@@ -5,6 +5,8 @@ export enum Button {
     Y = 'Y',
     LB = 'LB',
     RB = 'RB',
+    LT = 'LT',
+    RT = 'RT',
     SELECT = 'SELECT',
     BACK = 'BACK',
     START = 'START',
