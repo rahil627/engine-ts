@@ -38,6 +38,7 @@ export class World {
     public fixedFrameRate: boolean = true;
     public get delta(): number { return this.fixedFrameRate ? this.millisecondsPerFrame : this._delta; }
     public get deltaNormal(): number { return this.delta / this.millisecondsPerFrame; }
+    public millisecondsLastUpdate: number = 0;
 
     public backgroundColor: Color | (() => Color) = Color.lightGrey;
 
@@ -89,6 +90,8 @@ export class World {
         if(this.paused)
             return;
             
+        const startMs = Date.now();
+        
         this.updateDelta();
         this.updateEntities();
         this.clearCanvas(this.backgroundColor instanceof Color ? this.backgroundColor : this.backgroundColor());
@@ -98,6 +101,8 @@ export class World {
         this.gamepads.update();
 
         this._isFirstFrame = false;
+
+        this.millisecondsLastUpdate = Date.now() - startMs;
     }
 
     private updateDelta(): void {

@@ -959,8 +959,8 @@ export class Geometry {
     // TODO: rename 
     private static isSameSideOfPoint = (a: IPoint, b: IPoint, c: IPoint) =>
         Geometry.IsWithinToleranceOf(a.x, b.x)
-            ? (Math.sign(c.y - a.y) === Math.sign(b.y - a.y) || Math.sign(c.y - a.y) === 0 || Math.sign(b.y - a.y) === 0)
-            : (Math.sign(c.x - a.x) === Math.sign(b.x - a.x) || Math.sign(c.x - a.x) === 0 || Math.sign(b.x - a.x) === 0);
+            ? (Math.sign(c.y - a.y) === Math.sign(b.y - a.y) || Geometry.IsWithinToleranceOf(a.y, c.y) || Geometry.IsWithinToleranceOf(a.y, b.y))
+            : (Math.sign(c.x - a.x) === Math.sign(b.x - a.x) || Geometry.IsWithinToleranceOf(a.x, c.x) || Geometry.IsWithinToleranceOf(a.x, b.x));
 
     // TODO:
     //  1. test what happens when the lines/rays/segments are directly atop one another

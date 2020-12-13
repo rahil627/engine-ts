@@ -96,6 +96,7 @@ export const randomSeed = Math.random();
 console.log(`Random seed: ${randomSeed}`);
 export const random = getRandomNumberGenerator(randomSeed);
 export const randomSign = (): number => Math.sign(random() - 0.5);
+export const randomRange = (min: number, max: number): number => random() * (max - min) + min
 
 declare global {
     interface Array<T> {
