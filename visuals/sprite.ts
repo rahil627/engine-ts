@@ -24,6 +24,8 @@ export class SpriteAnimation {
         this.timeWeightTotal = this.frames.sumOf(o => o.timeWeight);
     }
 
+    public get finished(): boolean { return this.timer.finished; }
+
     update(deltaMs: number) {
         this.timer.update(deltaMs);
     }
@@ -55,7 +57,8 @@ export class SpriteAnimation {
 
 export class Sprite {
     private readonly animationByName: { [animationName: string]: SpriteAnimation } = {};
-    private currentAnimationName: string;
+    private _currentAnimationName: string;
+    public get currentAnimationName(): string { return this._currentAnimationName; }
 
     constructor(
         private readonly world: World,
@@ -64,22 +67,28 @@ export class Sprite {
         public readonly hFrame: number,
     ) {}
 
+    get isCurrentAnimationFinished(): boolean {
+        if(!(this._currentAnimationName in this.animationByName))
+            return false;
+        return this.animationByName[this._currentAnimationName].finished;
+    }
+
     addAnimation(animationName: string, animation: SpriteAnimation) {
         this.animationByName[animationName] = animation;
     }
 
     setAnimation(animationName: string) {
-        if(animationName === this.currentAnimationName)
+        if(animationName === this._currentAnimationName)
             return;
         
-        if(this.currentAnimationName in this.animationByName)
-            this.animationByName[this.currentAnimationName].reset();
-        this.currentAnimationName = animationName;        
+        if(this._currentAnimationName in this.animationByName)
+            this.animationByName[this._currentAnimationName].reset();
+        this._currentAnimationName = animationName;        
     }
 
     update() {
-        if(this.currentAnimationName in this.animationByName)
-            this.animationByName[this.currentAnimationName].update(this.world.delta);
+        if(this._currentAnimationName in this.animationByName)
+            this.animationByName[this._currentAnimationName].update(this.world.delta);
     }
 
     draw(position: IPoint,
@@ -88,11 +97,11 @@ export class Sprite {
         center?:IPoint,
         alpha:number=1
     ) {
-        if(this.currentAnimationName in this.animationByName) {
-            const animation = this.animationByName[this.currentAnimationName];
+        if(this._currentAnimationName in this.animationByName) {
+            const animation = this.animationByName[this._currentAnimationName];
             const currentIndices = animation.currentIndices;
             this.drawFrame(position, currentIndices.x, currentIndices.y, scale, angle, center, alpha);
-        } else if(this.currentAnimationName == null) {
+        } else if(this._currentAnimationName == null) {
             this.drawFrame(position, 0, 0);
         }
     }
