@@ -93,4 +93,8 @@ export class Actor extends Entity {
             y: this.acceleration.y * deltaNormal
         }
     }
+
+    public collide(actor: Actor): boolean {
+        return Geometry.Collide.RectangleRectangle(this.bounds, actor.bounds);
+    }
 }
