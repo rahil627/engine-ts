@@ -190,4 +190,8 @@ export class World {
     public entitiesOfClass<T extends Entity>(_class: string): T[] {
         return _class in this.entitiesByClass ? this.entitiesByClass[_class].map(e => e as T) : [];
     }
+
+    public entityOfClass<T extends Entity>(_class: string): T | null {
+        return _class in this.entitiesByClass ? this.entitiesByClass[_class].first() as T : null;
+    }
 }
