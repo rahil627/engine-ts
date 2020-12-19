@@ -187,11 +187,11 @@ export class World {
             : b.depth - a.depth;
     };
 
-    public entitiesOfClass<T extends Entity>(_class: string): T[] {
-        return _class in this.entitiesByClass ? this.entitiesByClass[_class].map(e => e as T) : [];
+    public entitiesOfClassType<T extends new (...args: any[]) => U, U extends Entity>(_class: T): InstanceType<T>[] {
+        return _class.name in this.entitiesByClass ? this.entitiesByClass[_class.name].map(e => e as InstanceType<T>) : [];
     }
 
-    public entityOfClass<T extends Entity>(_class: string): T | null {
-        return _class in this.entitiesByClass ? this.entitiesByClass[_class].first() as T : null;
+    public entitiesOfClass<T extends Entity>(_class: string): T[] {
+        return _class in this.entitiesByClass ? this.entitiesByClass[_class].map(e => e as T) : [];
     }
 }

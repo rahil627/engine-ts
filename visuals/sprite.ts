@@ -1,4 +1,4 @@
-import { moduloSafe, random } from '@engine-ts/core/utils';
+import { clamp, random } from '@engine-ts/core/utils';
 import { World } from '@engine-ts/core/world';
 import { Geometry } from '@engine-ts/geometry/geometry';
 import { IPoint } from '@engine-ts/geometry/interfaces';
@@ -15,7 +15,7 @@ export class SpriteAnimation {
     private readonly timeWeightTotal: number;
     public get seconds(): number { return this.timer.seconds; }
     public get completion(): number { return this.timer.value; }
-    public set completion(value: number) { this.timer.value = moduloSafe(value, 1);}
+    public set completion(value: number) { this.timer.value = clamp(value, 0, 1);}
 
     constructor(
         private readonly frames: ISpriteFrame[],
@@ -92,6 +92,11 @@ export class Sprite {
         if(this._currentAnimationName in this.animationByName)
             this.animationByName[this._currentAnimationName].reset();
         this._currentAnimationName = animationName;        
+    }
+
+    resetCurrentAnimation() {
+        if(this._currentAnimationName in this.animationByName)
+            this.animationByName[this._currentAnimationName].reset();
     }
 
     update() {
