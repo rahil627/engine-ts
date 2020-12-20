@@ -187,11 +187,23 @@ export class World {
             : b.depth - a.depth;
     };
 
+    // not a clone of the list, but the actual World list itself!
     public entitiesOfClassType<T extends new (...args: any[]) => U, U extends Entity>(_class: T): InstanceType<T>[] {
-        return _class.name in this.entitiesByClass ? this.entitiesByClass[_class.name].map(e => e as InstanceType<T>) : [];
+        return _class.name in this.entitiesByClass ? this.entitiesByClass[_class.name] as InstanceType<T>[] : [];
     }
 
+    // TODO: return the actual list of entities saved by the World instead of a copy
     public entitiesOfClass<T extends Entity>(_class: string): T[] {
         return _class in this.entitiesByClass ? this.entitiesByClass[_class].map(e => e as T) : [];
+    }
+
+    // gets the first entity of a class
+    public singleton<T extends new (...args: any[]) => U, U extends Entity>(_class: T): InstanceType<T> | null {
+        if(!(_class.name in this.entitiesByClass))
+            return null;
+        const entity = this.entitiesByClass[_class.name].first()
+        if(entity == null)
+            return null;
+        return entity as InstanceType<T>;
     }
 }

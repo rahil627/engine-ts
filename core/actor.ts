@@ -5,7 +5,11 @@ import { Point } from '@engine-ts/geometry/point';
 import { Geometry } from '@engine-ts/geometry/geometry';
 import { Rectangle } from '@engine-ts/geometry/rectangle';
 
-export class Actor extends Entity {
+export interface IBounds {
+    bounds: IRectangle
+}
+
+export class Actor extends Entity implements IBounds {
     public get bounds(): IRectangle {
         return Geometry.Rectangle.Translate(this.boundsLocal, this.position);
     }
@@ -78,23 +82,25 @@ export class Actor extends Entity {
             .add(this.frameVelocity);
     }
 
+    private _frameVelocity: Point = new Point();
     get frameVelocity(): IPoint {
         const deltaNormal = this.world.deltaNormal;
-        return {
-            x: this.velocity.x * deltaNormal,
-            y: this.velocity.y * deltaNormal
-        }
+        return this._frameVelocity.setToXY(
+            this.velocity.x * deltaNormal,
+            this.velocity.y * deltaNormal
+        );
     }
 
+    private _frameAcceleration: Point = new Point();
     get frameAcceleration(): IPoint {
         const deltaNormal = this.world.deltaNormal;
-        return {
-            x: this.acceleration.x * deltaNormal,
-            y: this.acceleration.y * deltaNormal
-        }
+        return this._frameAcceleration.setToXY(
+            this.acceleration.x * deltaNormal,
+            this.acceleration.y * deltaNormal
+        );
     }
 
-    public collide(actor: Actor): boolean {
+    public collide(actor: IBounds): boolean {
         return Geometry.Collide.RectangleRectangle(this.bounds, actor.bounds);
     }
 }

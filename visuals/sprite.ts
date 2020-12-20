@@ -13,6 +13,7 @@ export interface ISpriteFrame {
 export class SpriteAnimation {
     private readonly timer: Timer;
     private readonly timeWeightTotal: number;
+    public speed: number = 1; // must be >= 0
     public get seconds(): number { return this.timer.seconds; }
     public get completion(): number { return this.timer.value; }
     public set completion(value: number) { this.timer.value = clamp(value, 0, 1);}
@@ -29,7 +30,7 @@ export class SpriteAnimation {
     public get finished(): boolean { return this.timer.finished; }
 
     update(deltaMs: number) {
-        this.timer.update(deltaMs);
+        this.timer.update(deltaMs * this.speed);
     }
 
     reset() {
@@ -66,6 +67,15 @@ export class Sprite {
         if(this._currentAnimationName in this.animationByName)
             return this.animationByName[this._currentAnimationName].completion;
         return 0;
+    }
+    public get currentAnimationSpeed(): number { 
+        if(this._currentAnimationName in this.animationByName)
+            return this.animationByName[this._currentAnimationName].speed;
+        return 0;
+    }
+    public set currentAnimationSpeed(speed: number) { 
+        if(this._currentAnimationName in this.animationByName)
+            this.animationByName[this._currentAnimationName].speed = speed;
     }
 
     constructor(
