@@ -95,7 +95,11 @@ export function getRandomNumberGenerator(seed: number): () => number {
 export const randomSeed = Math.random();
 console.log(`Random seed: ${randomSeed}`);
 export const random = getRandomNumberGenerator(randomSeed);
+
+// inclusive of -0.5, exclusive of positive 0.5
 export const randomSign = (): number => Math.sign(random() - 0.5);
+
+// inclusive of lower bound, exclusive of upper bound
 export const randomRange = (min: number, max: number): number => random() * (max - min) + min
 
 declare global {
