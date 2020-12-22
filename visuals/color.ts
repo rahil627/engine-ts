@@ -1,6 +1,9 @@
-import { clamp } from '../core/utils';
+import { clamp, random } from '../core/utils';
 
 export class Color {
+    public static get random(): Color {
+        return new Color(Math.floor(random() * 256), Math.floor(random() * 256), Math.floor(random() * 256));
+    }
 
     private static _red: ConstColor;
     public static get red(): ConstColor { return Color._red; }
