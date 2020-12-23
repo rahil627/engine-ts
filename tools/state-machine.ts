@@ -27,7 +27,10 @@ export class StateMachine
         return this.states[this.currentStateName];
     };
     
-    public changeState(stateName: string) {
+    // forceChange = even if we're already in this state, finish & start it again
+    public changeState(stateName: string, forceChange=false) {
+        if(!forceChange && stateName === this.currentStateName)
+            return;
         if(!(stateName in this.states))
             throw `Cannot change a StateMachine to a state ('${stateName}') that has not been added to it! Available states are: ${Object.keys(this.states).length <= 0 ? 'n/a' : Object.keys(this.states).join(', ')}`
     

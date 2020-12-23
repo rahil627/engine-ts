@@ -95,8 +95,9 @@ export class Sprite {
         this.animationByName[animationName] = animation;
     }
 
-    setAnimation(animationName: string) {
-        if(animationName === this._currentAnimationName)
+    // forceChange = restart the animation if it's already the animation that's playing
+    setAnimation(animationName: string, forceChange=false) {
+        if(!forceChange && animationName === this._currentAnimationName)
             return;
         
         if(this._currentAnimationName in this.animationByName)
