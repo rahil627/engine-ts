@@ -7,21 +7,26 @@ import { ICircle, IPoint, ITriangle, IRectangle, ILine, IRay, ISegment, IPolygon
 // TODO: use IPoint everywhere instead
 import { Point } from '@engine-ts/geometry/point';
 import { Geometry } from '@engine-ts/geometry/geometry';
+import { Images } from '@engine-ts/core/images';
 
 export type FillStyle = Color | string | null;
 export type StrokeStyle = FillStyle;
 export type HalignAll = Halign | "left" | "center" | "right" | "start" | "end";
 export type ValignAll = Valign | "top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom";
 
-interface CameraContext {
+export interface CameraContext {
     camera: IPoint,
     context: CanvasRenderingContext2D,
+}
+
+export interface ImagesCameraContext extends CameraContext {
+    images: Images
 }
 
 // TODO: remove world from this doc and instead create a world.draw property which has all these
 // same functions and simply calls the below functions after applying the world's camera position, zoom level, etc.
 export class Draw {
-    public static image(world: World, imageName: string, position: IPoint, scale: IPoint=Geometry.Point.One, angle: number=0, center?:IPoint, alpha:number=1) {
+    public static image(world: ImagesCameraContext, imageName: string, position: IPoint, scale: IPoint=Geometry.Point.One, angle: number=0, center?:IPoint, alpha:number=1) {
         const context = world.context;
         const image = world.images.get(imageName);
         if(!image) {
@@ -49,7 +54,7 @@ export class Draw {
         context.globalAlpha = globalAlphaPrevious;
     }
     
-    public static imagePart(world: World, imageName: string, position: IPoint, sx: number, sy: number, sw: number, sh: number, scale: IPoint=Geometry.Point.One, angle: number=0, center?:IPoint, alpha:number=1) {
+    public static imagePart(world: ImagesCameraContext, imageName: string, position: IPoint, sx: number, sy: number, sw: number, sh: number, scale: IPoint=Geometry.Point.One, angle: number=0, center?:IPoint, alpha:number=1) {
         const context = world.context;
         const image = world.images.get(imageName);
         if(!image) {
@@ -300,6 +305,17 @@ export class Draw {
         colorStopArray.applyToGradient(gradient);
         context.fillStyle = gradient;
         context.fillRect(diff.x, diff.y, rectangle.w, rectangle.h);
+    };
+    
+    public static circleArcGradient(world: CameraContext, circle: ICircle, colorStopArray: ColorStopArray, startAngle: number=0, endAngle: number=tau) {
+        const context = world.context;
+        const diff = new Point(circle.x, circle.y).subtract(world.camera);
+        const gradient = context.createRadialGradient(diff.x, diff.y, 0, diff.x, diff.y, circle.radius);
+        colorStopArray.applyToGradient(gradient);
+        context.fillStyle = gradient;
+        context.beginPath();
+        context.arc(circle.x - world.camera.x, circle.y - world.camera.y, circle.radius, startAngle, endAngle);
+        context.fill();
     };
 
     private static rectangleRoundedPath(world: CameraContext, rectangle: IRectangle, radius: number, angle: number=0, center?: IPoint) {

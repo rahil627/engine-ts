@@ -3,7 +3,7 @@ import { World } from '@engine-ts/core/world';
 import { Geometry } from '@engine-ts/geometry/geometry';
 import { IPoint } from '@engine-ts/geometry/interfaces';
 import { LoopTimer, Timer } from '@engine-ts/tools/timer';
-import { Draw } from './draw';
+import { Draw, ImagesCameraContext } from './draw';
 
 export interface ISpriteFrame {
     indices: IPoint,
@@ -119,14 +119,15 @@ export class Sprite {
         scale: IPoint=Geometry.Point.One,
         angle: number=0,
         center?:IPoint,
-        alpha:number=1
+        alpha:number=1,
+        cameraContext: ImagesCameraContext=this.world,
     ) {
         if(this._currentAnimationName in this.animationByName) {
             const animation = this.animationByName[this._currentAnimationName];
             const currentIndices = animation.currentIndices;
-            this.drawFrame(position, currentIndices.x, currentIndices.y, scale, angle, center, alpha);
+            this.drawFrame(position, currentIndices.x, currentIndices.y, scale, angle, center, alpha, cameraContext);
         } else if(this._currentAnimationName == null) {
-            this.drawFrame(position, 0, 0);
+            this.drawFrame(position, 0, 0, Geometry.Point.One, 0, undefined, 1, cameraContext);
         }
     }
 
@@ -137,10 +138,11 @@ export class Sprite {
         scale: IPoint=Geometry.Point.One,
         angle: number=0,
         center?:IPoint,
-        alpha:number=1
+        alpha:number=1,
+        cameraContext: ImagesCameraContext=this.world,
     ) {
         Draw.imagePart(
-            this.world,
+            cameraContext,
             this.imageName,
             position,
             xIndex * this.wFrame,

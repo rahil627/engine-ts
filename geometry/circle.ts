@@ -1,11 +1,10 @@
 import { Point } from './point';
 import { ICircle, IPoint, IRectangle } from './interfaces';
-import { tau } from '@engine-ts/core/utils';
 import { Geometry } from './geometry';
 
 
 export class Circle extends Point implements ICircle { 
-    constructor(public x: number, public y: number, public radius: number) {
+    constructor(public x: number=0, public y: number=0, public radius: number=0) {
         super(x, y);
     }
     public cloneCircle(): Circle { return new Circle(this.x, this.y, this.radius); }

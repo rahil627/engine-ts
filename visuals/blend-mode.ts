@@ -8,6 +8,7 @@
     DestinationIn = 'destination-in',
     DestinationOut = 'destination-out',
     DestinationAtop = 'destination-atop',
+    Add = 'lighter',
     Lighter = 'lighter',
     Copy = 'copy',
     Xor = 'xor',
