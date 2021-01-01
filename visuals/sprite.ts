@@ -21,9 +21,11 @@ export class SpriteAnimation {
     constructor(
         private readonly frames: ISpriteFrame[],
         seconds: number,
-        loop: boolean = true,
+        loop: boolean=true,
+        completion: number=0,
     ) {
         this.timer = loop ? new LoopTimer(seconds) : new Timer(seconds);
+        this.completion = completion;
         this.timeWeightTotal = this.frames.sumOf(o => o.timeWeight);
     }
 
@@ -91,23 +93,26 @@ export class Sprite {
         return this.animationByName[this._currentAnimationName].finished;
     }
 
-    addAnimation(animationName: string, animation: SpriteAnimation) {
+    addAnimation(animationName: string, animation: SpriteAnimation): this {
         this.animationByName[animationName] = animation;
+        return this;
     }
 
     // forceChange = restart the animation if it's already the animation that's playing
-    setAnimation(animationName: string, forceChange=false) {
+    setAnimation(animationName: string, forceChange=false): this {
         if(!forceChange && animationName === this._currentAnimationName)
-            return;
+            return this;
         
         if(this._currentAnimationName in this.animationByName)
             this.animationByName[this._currentAnimationName].reset();
-        this._currentAnimationName = animationName;        
+        this._currentAnimationName = animationName;
+        return this;
     }
 
-    resetCurrentAnimation() {
+    resetCurrentAnimation(): this {
         if(this._currentAnimationName in this.animationByName)
             this.animationByName[this._currentAnimationName].reset();
+        return this;
     }
 
     update() {
