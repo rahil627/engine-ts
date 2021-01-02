@@ -13,4 +13,15 @@ export class Healthbar {
             this._health = 0;
         }
     }
+
+    public heal(health: number) {
+        this._health += health;
+        if(this._health > this.healthMax) {
+            this._health = this.healthMax;
+        }
+    }
+
+    public fullHeal() {
+        this._health = this.healthMax;
+    }
 }
