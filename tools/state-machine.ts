@@ -12,15 +12,17 @@ export class StateMachine
     private readonly states: { [name: string]: State } = {};
     public currentStateName: string | null = null;
 
-    public reset() {
+    public reset(): this {
         const state = this.currentState;
         if(state.finish)
             state.finish();
         this.currentStateName = null;
+        return this;
     };
     
-    public addState(state: State) {
+    public addState(state: State): this {
         this.states[state.name] = state;
+        return this;
     };
     
     private get currentState(): State {
@@ -28,9 +30,9 @@ export class StateMachine
     };
     
     // forceChange = even if we're already in this state, finish & start it again
-    public changeState(stateName: string, forceChange=false) {
+    public changeState(stateName: string, forceChange=false): this {
         if(!forceChange && stateName === this.currentStateName)
-            return;
+            return this;
         if(!(stateName in this.states))
             throw `Cannot change a StateMachine to a state ('${stateName}') that has not been added to it! Available states are: ${Object.keys(this.states).length <= 0 ? 'n/a' : Object.keys(this.states).join(', ')}`
     
@@ -41,17 +43,19 @@ export class StateMachine
         this.currentStateName = stateName;
         if(stateNext && stateNext.start)
             stateNext.start();
+        return this;
     };
     
-    public start(initialStateName: string) {
+    public start(initialStateName: string): this {
         if(Object.keys(this.states).length <= 0)
             throw "Cannot start a StateMachine which has had no states added to it!";
-        this.changeState(initialStateName);
+        return this.changeState(initialStateName);
     };
     
-    public update() {
+    public update(): this {
         const state = this.currentState;
         if(state && state.update)
             state.update();
+        return this;
     };
 }
