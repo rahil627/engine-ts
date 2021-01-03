@@ -73,6 +73,11 @@ export class World {
 
         // default _delta to the value at the given fps
         this._delta = this.millisecondsPerFrame;
+        // const update = () => {
+        //     this.updateFrame();
+        //     requestAnimationFrame(update);
+        // }
+        // requestAnimationFrame(update)
         setInterval(() => this.updateFrame(), this.millisecondsPerFrame);
     }
 

@@ -1,9 +1,10 @@
-import { createCanvas, clamp, random } from '@engine-ts/core/utils';
+import { clamp, random } from '@engine-ts/core/utils';
 import { PixelGrid } from './pixel-grid';
 import { Color } from '@engine-ts/visuals/color';
 import { IPoint } from '@engine-ts/geometry/interfaces';
 import { Geometry } from '@engine-ts/geometry/geometry';
 import { World } from '@engine-ts/core/world';
+import { createCanvas } from '@engine-ts/visuals/create-canvas';
 
 export class Perlin {
     private noiseCanvas: HTMLCanvasElement;
