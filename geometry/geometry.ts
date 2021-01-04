@@ -907,6 +907,12 @@ export class Geometry {
             Geometry.Collide.SegmentsSegments(Geometry.Polygon.Segments(polygon), Geometry.Rectangle.Segments(rectangle))
             || Geometry.Collide.PolygonPoint(polygon, rectangle)
             || Geometry.Collide.RectanglePoint(rectangle, polygon.vertices.first()),
+        RectangleSegment: (rectangle: IRectangle, segment: ISegment): boolean =>
+            rectangle.w > 0 && rectangle.h > 0 && Geometry.Collide.RectanglePoint(rectangle, Geometry.Segment.ClosestPointTo(segment, Geometry.Rectangle.Center(rectangle))),
+        RectangleLine: (rectangle: IRectangle, line: ILine): boolean =>
+            rectangle.w > 0 && rectangle.h > 0 && Geometry.Collide.RectanglePoint(rectangle, Geometry.Line.ClosestPointTo(line, Geometry.Rectangle.Center(rectangle))),
+        RectangleRay: (rectangle: IRectangle, ray: IRay): boolean =>
+            rectangle.w > 0 && rectangle.h > 0 && Geometry.Collide.RectanglePoint(rectangle, Geometry.Ray.ClosestPointTo(ray, Geometry.Rectangle.Center(rectangle))),
         RectanglePoint: (rectangle: IRectangle, point: IPoint): boolean =>
             point.x >= rectangle.x && point.y >= rectangle.y && point.x < rectangle.x + rectangle.w && point.y < rectangle.y + rectangle.h,
         CircleCircle: (circleA: ICircle, circleB: ICircle): boolean =>

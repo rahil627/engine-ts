@@ -1,26 +1,26 @@
 export interface IPoint {
-    readonly x: number;
-    readonly y: number;
+    x: number;
+    y: number;
 }
 
 export interface ICircle extends IPoint {
-    readonly radius: number
+    radius: number
 }
 
 export interface IRectangle extends IPoint {
-    readonly w: number;
-    readonly h: number;
+    w: number;
+    h: number;
 }
 
 export interface ITriangle {
-    readonly a: IPoint;
-    readonly b: IPoint;
-    readonly c: IPoint;
+    a: IPoint;
+    b: IPoint;
+    c: IPoint;
 }
 
 export interface IPointPair {
-    readonly a: IPoint,
-    readonly b: IPoint
+    a: IPoint,
+    b: IPoint
 }
 export interface ILine extends IPointPair {}
 export interface IRay extends IPointPair {}
