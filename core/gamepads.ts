@@ -46,6 +46,19 @@ export class Gamepads {
 
     constructor() {}
 
+    // only works in chrome
+    // https://gitlab.com/gilrs-project/gilrs/-/issues/81
+    public vibrate(duration: number, weakMagnitude: number=1, strongMagnitude: number = 1, gamepadId: number=0) {
+        const gamepad = this.gamepads[gamepadId];
+        if(gamepad) {
+            (gamepad as any).vibrationActuator.playEffect("dual-rumble", {
+                duration,
+                weakMagnitude,
+                strongMagnitude,
+            });
+        }
+    }
+
     public update() {
         if(!Gamepads.AreAvailable)
             return;
